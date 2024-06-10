@@ -4,12 +4,15 @@ import cv2
 import numpy as np
 import serial
 import time
+from dronekit import connect, VehicleMode
+import math
 import json
+import requests
 import pyautogui
 from flask import Flask, render_template, Response
 
 ser = serial.Serial(
-    port="/dev/ttyUSB1",
+    port="/dev/ttyUSB0",
     baudrate=1000000,
     bytesize=serial.EIGHTBITS,
     parity=serial.PARITY_NONE,
@@ -17,36 +20,57 @@ ser = serial.Serial(
     timeout=1
     
 )
+headersList = {
+    'Accept': '/',
+    'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
+    'Content-Type': 'application/json'
+}
+
 
 def send_command():
     # Send the command
-    forward_command = {"T": 1, "L": 255, "R": 255}
+    forward_command = {"T": 1, "L": 200, "R": 200}
     ser.write((json.dumps(forward_command) + '\n').encode('utf-8'))
-    print("Test")
+    print("Forward")
 
 def send_Right():
     # Send the command
-    Right_command = {"T": 1, "L": 255, "R": -255}
+    Right_command = {"T": 1, "L": -200, "R": 200}
     ser.write((json.dumps(Right_command) + '\n').encode('utf-8'))
-    print("Test")
+    print("Moving Right")
     
 def send_Left():
     # Send the command
-    Left_command = {"T": 1, "L": 255, "R": -255}
+    Left_command = {"T": 1, "L": 200, "R": -200}
     ser.write((json.dumps(Left_command) + '\n').encode('utf-8'))
-    print("Test")
+    print("Moving Left")
 
 def send_Reverse():
     # Send the command
-    Rev_command = {"T": 1, "L": 255, "R": -255}
+    Rev_command = {"T": 1, "L": -200, "R": -200}
     ser.write((json.dumps(Rev_command) + '\n').encode('utf-8'))
-    print("Test")    
+    print("Going Back")    
 
 def send_Stop():
     # Send the command
     Stop_command = {"T":0}
     ser.write((json.dumps(Stop_command) + '\n').encode('utf-8'))
-    print("Test")
+    print("Stop")
+    
+def battery_info():
+    try:
+        ser.write(b'{"T":70}\n')
+        response = ser.readline().decode('utf-8').strip()
+        imu_data = json.loads(response)
+        #print(imu_data)
+        return imu_data
+    except Exception as e:
+        print("Error:", e)
+        return None
+      
+
+
+             
 app = Flask(__name__)
 
 # OpenCV window name
@@ -90,18 +114,11 @@ def left():
     send_Left()
     return "Left command received"
 
-# Flask route to handle left movement
-@app.route('/imu')
+@app.route('/battery')
 def imu():
-    try:
-      ser.write(b'{"T":71}\n')
-      response = ser.readline().decode('utf-8').strip()
-      imu_data = json.loads(response)
-      print(imu_data)
-      return imu_data
-    except:
-      print("errorr")
-
+    a=battery_info()
+    return a
+ 
 def generate_frames():
     # Main loop to capture frames
     while True:
