@@ -19,10 +19,10 @@ def get_current_position(serial_port):
                 except pynmea2.ParseError as e:
                     print(f"Parse error: {e}")
 
-gps_serial_port = '/dev/ttyAMA2' 
+gps_serial_port = '/dev/ttyUSB0' 
 ser_gps = serial.Serial(gps_serial_port, baudrate=38400, timeout=1)
 
-rover_serial_port = '/dev/ttyS0' 
+rover_serial_port = '/dev/ttyUSB1' 
 ser_rover = serial.Serial(rover_serial_port, baudrate=1000000, timeout=1)
 
 def send_movement_command(command):

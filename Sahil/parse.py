@@ -21,4 +21,4 @@ def read_coordinates(serial_port):
     
 
 if __name__ == "__main__":
-    read_coordinates('/dev/ttyAMA2')
+    read_coordinates('/dev/ttyUSB0')
