@@ -12,7 +12,7 @@ GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
 
 ser = serial.Serial(
-    port="/dev/ttyUSB0",
+    port="/dev/ttyUSB1",
     baudrate=1000000,
     bytesize=serial.EIGHTBITS,
     parity=serial.PARITY_NONE,
@@ -27,16 +27,16 @@ def send_stop():
     
 def send_Right():
     # Send the command
-    Right_command = {"T": 1, "L": -100, "R": 100}
+    Right_command = {"T": 1, "L": 200, "R": -200}
     ser.write((json.dumps(Right_command) + '\n').encode('utf-8'))
     time.sleep(0.5)
     print("Turning Right")
     
 def send_Left():
     # Send the command
-    Left_command = {"T": 1, "L": 100, "R": -100}
+    Left_command = {"T": 1, "L": -200, "R": 200}
     ser.write((json.dumps(Left_command) + '\n').encode('utf-8'))
-    time.sleep(0.2)
+    time.sleep(1)
     print("Turning Left")
 
 def measure_distance():
@@ -65,14 +65,14 @@ try:
             forward_command = {"T": 1, "L": 150, "R": 150}
             ser.write((json.dumps(forward_command) + '\n').encode('utf-8'))
             print("Raw values : ", dist)
-            if dist < 30:
+            if dist < 50:
                 send_stop()
                 print("Distance before turning : ", dist)
-                while dist is not None and dist < 50:
+                while dist is not None and dist < 80:
                     time.sleep(0.5)
                     dist = measure_distance()
                     if dist is not None:
-                        print("Inside while loop, distance: ", dist)
+                        # print("Inside while loop, distance: ", dist)
                         send_Left()
                         # random.choice([send_Left, send_Right])()
                         # time.sleep(0.5)

@@ -35,13 +35,13 @@ def send_command():
 
 def send_Right():
     # Send the command
-    Right_command = {"T": 1, "L": -200, "R": 200}
+    Right_command = {"T": 1, "L": 200, "R": -200}
     ser.write((json.dumps(Right_command) + '\n').encode('utf-8'))
     print("Moving Right")
     
 def send_Left():
     # Send the command
-    Left_command = {"T": 1, "L": 200, "R": -200}
+    Left_command = {"T": 1, "L": -200, "R": 200}
     ser.write((json.dumps(Left_command) + '\n').encode('utf-8'))
     print("Moving Left")
 
